@@ -1,25 +1,25 @@
+using IdentityServer.Config;
+using Services;
+
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
 
-// Add services to the container.
+//DI config
+services.AddIdentityServer()
+    .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
+    .AddInMemoryClients(IdentityConfig.Clients)
+    .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)
+    .AddInMemoryApiResources(IdentityConfig.ApiResources)
+    .AddTestUsers(IdentityConfig.TestUsers) //todo: not something we want to use in a production environment
+    .AddProfileService<RoleClaimSetterService>()
+    .AddDeveloperSigningCredential(); //todo: not something we want to use in a production environment
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddScoped<RoleClaimSetterService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+//Middlewares config
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseIdentityServer();
 
 app.Run();
