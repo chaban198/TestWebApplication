@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using TaskListWebApplication.Helpers;
+using TaskListWebApplication.Models.Exceptions;
+using TaskListWebApplication.Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var serviceCollection = builder.Services;
 
 #region DI
+
+var identityConfig = builder.Configuration
+    .GetSection(nameof(IdentityServerOptions))
+    .Get<IdentityServerOptions>() ?? throw new ConfigurationException(typeof(IdentityServerOptions));
 
 //Routing
 serviceCollection.AddControllers();
@@ -48,17 +54,17 @@ serviceCollection.AddSwaggerGen(options =>
 serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        options.Authority = "https://localhost:44342";
-        options.Audience = "task-list-api";
+        options.Authority = identityConfig.Url;
+        options.Audience = identityConfig.Audience;
     });
 
-serviceCollection.AddAuthorization(options =>
-{
-    options.AddRoleSystemPolicies();
-});
+serviceCollection.AddAuthorization(options => { options.AddRoleSystemPolicies(); });
 
 //Middlewares
 serviceCollection.AddScoped<SwaggerUiAuthorizationCorrectorMiddleware>();
+
+//Options
+serviceCollection.AddOptions<IdentityServerOptions>();
 
 #endregion
 

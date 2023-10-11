@@ -17,6 +17,7 @@ public static class IdentityConfig
         {
             ClientId = "task-list-test-client",
             ClientSecrets = { new Secret("secret".Sha256()) },
+            AlwaysIncludeUserClaimsInIdToken = true,
             AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
             AllowedScopes = { IdentityServerConstants.StandardScopes.OpenId, TaskListApiScope }
         }
@@ -30,7 +31,7 @@ public static class IdentityConfig
 
     public static IEnumerable<ApiScope> ApiScopes => new ApiScope[]
     {
-        new(TaskListApiScope, "Task-List Web API")
+        new(TaskListApiScope, "Task-List Web API", new[] { RoleClaim })
     };
 
     public static IEnumerable<ApiResource> ApiResources => new ApiResource[]
