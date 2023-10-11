@@ -33,7 +33,7 @@
       <Compile Update="Services\IdentityUserService.cs">
         <DependentUpon>IIdentityUserService.cs</DependentUpon>
       </Compile>
-      <Compile Update="Data\Seeders\RoleSystemSeeder.cs">
+      <Compile Update="Services\TestUsersSeeder.cs">
         <DependentUpon>ISeeder.cs</DependentUpon>
       </Compile>
     </ItemGroup>

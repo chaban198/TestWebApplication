@@ -1,4 +1,4 @@
-namespace IdentityServer.Data.Seeders;
+namespace Services;
 
 public interface ISeeder
 {

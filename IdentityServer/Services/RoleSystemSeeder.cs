@@ -1,7 +1,7 @@
 using GlobalDomain.Models.Configuration;
 using Microsoft.AspNetCore.Identity;
 
-namespace IdentityServer.Data.Seeders;
+namespace Services;
 
 public class RoleSystemSeeder : ISeeder
 {

@@ -43,16 +43,14 @@ public static class IdentityConfig
     {
         new TestUser
         {
-            SubjectId = "a3ea0f25-b464-506f-bc1e-c925176244b9",
-            Username = "Debug User",
-            Password = "123456qwerty",
+            Username = "DebugUser",
+            Password = "String123!",
             Claims = new List<Claim> { new(RoleClaim, User) }
         },
         new TestUser
         {
-            SubjectId = "a3ea0f25-b464-506f-bc1e-c925176244b9",
-            Username = "Debug User2",
-            Password = "123456qwerty",
+            Username = "DebugAdmin",
+            Password = "String123!",
             Claims = new List<Claim> { new(RoleClaim, Admin) }
         }
     };

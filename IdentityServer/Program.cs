@@ -1,6 +1,5 @@
 using IdentityServer.Config;
 using IdentityServer.Data;
-using IdentityServer.Data.Seeders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -31,6 +30,7 @@ services.AddSwaggerGen();
 
 services.AddScoped<IIdentityUserService, IdentityUserService>();
 services.AddScoped<RoleSystemSeeder>();
+services.AddScoped<TestUsersSeeder>();
 services.AddScoped<ResourceOwnerPasswordValidator>();
 services.AddDbContext<IdentityServerDbContext>(optionsBuilder => { optionsBuilder.UseNpgsql(configuration.GetConnectionString("identityDb")); });
 
@@ -50,5 +50,6 @@ app.UseRouting();
 app.MapControllers();
 
 app.UseSeeder<RoleSystemSeeder>();
+app.UseSeeder<TestUsersSeeder>();
 
 app.Run();
