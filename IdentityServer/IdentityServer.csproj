@@ -36,6 +36,9 @@
       <Compile Update="Services\TestUsersSeeder.cs">
         <DependentUpon>ISeeder.cs</DependentUpon>
       </Compile>
+      <Compile Update="Services\EMailService.cs">
+        <DependentUpon>IEMailService.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

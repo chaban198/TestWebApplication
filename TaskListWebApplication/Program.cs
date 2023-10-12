@@ -1,24 +1,25 @@
+using GlobalDomain.Models.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using TaskListWebApplication.Helpers;
-using TaskListWebApplication.Models.Exceptions;
 using TaskListWebApplication.Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
-var serviceCollection = builder.Services;
+var services = builder.Services;
+var configuration = builder.Configuration;
 
 #region DI
 
-var identityConfig = builder.Configuration
+var identityConfig = configuration
     .GetSection(nameof(IdentityServerOptions))
     .Get<IdentityServerOptions>() ?? throw new ConfigurationException(typeof(IdentityServerOptions));
 
 //Routing
-serviceCollection.AddControllers();
-serviceCollection.AddEndpointsApiExplorer();
+services.AddControllers();
+services.AddEndpointsApiExplorer();
 
 //Swagger
-serviceCollection.AddSwaggerGen(options =>
+services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Доска Задач API", Version = "v1" });
     options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
@@ -51,20 +52,20 @@ serviceCollection.AddSwaggerGen(options =>
 });
 
 //Identity
-serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.Authority = identityConfig.Url;
         options.Audience = identityConfig.Audience;
     });
 
-serviceCollection.AddAuthorization(options => { options.AddRoleSystemPolicies(); });
+services.AddAuthorization(options => { options.AddRoleSystemPolicies(); });
 
 //Middlewares
-serviceCollection.AddScoped<SwaggerUiAuthorizationCorrectorMiddleware>();
+services.AddScoped<SwaggerUiAuthorizationCorrectorMiddleware>();
 
 //Options
-serviceCollection.AddOptions<IdentityServerOptions>();
+services.Configure<IdentityServerOptions>(configuration.GetSection(nameof(IdentityServerOptions)));
 
 #endregion
 

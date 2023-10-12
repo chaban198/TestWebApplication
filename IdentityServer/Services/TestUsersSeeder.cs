@@ -22,7 +22,7 @@ public class TestUsersSeeder : ISeeder
             var roleClaim = testUser.Claims.FirstOrDefault(x => x.Type is RoleSystem.RoleClaim);
             var role = roleClaim?.Value ?? RoleSystem.User;
 
-            await _userService.Register(identityUser, password, role);
+            await _userService.RegisterUserAsync(identityUser, password, role);
         }
     }
 }

@@ -1,5 +1,6 @@
 using IdentityServer.Config;
 using IdentityServer.Data;
+using IdentityServer.Models.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -28,10 +29,19 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
+//Services
 services.AddScoped<IIdentityUserService, IdentityUserService>();
+services.AddScoped<IEMailService, EMailService>();
+
+//Identity server services
 services.AddScoped<RoleSystemSeeder>();
 services.AddScoped<TestUsersSeeder>();
 services.AddScoped<ResourceOwnerPasswordValidator>();
+
+//Options
+services.Configure<SmtpOptions>(configuration.GetSection(nameof(SmtpOptions)));
+
+//Database
 services.AddDbContext<IdentityServerDbContext>(optionsBuilder => { optionsBuilder.UseNpgsql(configuration.GetConnectionString("identityDb")); });
 
 var app = builder.Build();

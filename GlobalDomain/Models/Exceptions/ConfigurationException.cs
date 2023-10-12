@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace TaskListWebApplication.Models.Exceptions;
+namespace GlobalDomain.Models.Exceptions;
 
 public class ConfigurationException : Exception
 {
@@ -9,7 +9,8 @@ public class ConfigurationException : Exception
     {
     }
 
-    public ConfigurationException(MemberInfo optionsType) : base($"Ошибка конфигурации приложения в секции {optionsType.Name}")
+    public ConfigurationException(MemberInfo optionsType, string? message = null)
+        : base($"Ошибка конфигурации приложения в секции {optionsType.Name}." + message)
     {
     }
 
