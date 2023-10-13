@@ -1,0 +1,152 @@
+{
+	"info": {
+		"_postman_id": "ba7e6aa1-395e-4391-bfb1-92d468d3017e",
+		"name": "TaskListIdentity",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15525746"
+	},
+	"item": [
+		{
+			"name": "GetToken",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "task-list-test-client",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "secret",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "Debug User",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456qwerty",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:44342/connect/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44342",
+					"path": [
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"DebugAdmin\",\r\n    \"password\": \"String123!\",\r\n    \"eMail\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44342/UserAccount/Register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44342",
+					"path": [
+						"UserAccount",
+						"Register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ResetPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44342/UserAccount/ResetPassword?userName=DebugUser229",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44342",
+					"path": [
+						"UserAccount",
+						"ResetPassword"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "DebugUser229"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ConfirmResetPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44342/UserAccount/ConfirmResetPassword?userName=DebugUser229&token=CfDJ8ACQSlj7V+BFrNfkWBZAPG3JyolW5OG714irV4mnxwUtI2Lad/+7v5EBNh+KZXlwUDjYgJpJrkWd289c9vCxh/rfthy+mFkAORb0c95wrzcEB+Jne1BZ6ZmlsX/PnH1+Sgph6JXnW4FxpbVTyLZvwgJIAhEpHNBw/kK440HLzJktUzE29MlbJ0y//9kqsioByesJiyzepANw+SCw65J33RxtkI3q6mhXNz+t6RaO2cZr&newPassword=String123!!",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44342",
+					"path": [
+						"UserAccount",
+						"ConfirmResetPassword"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "DebugUser229"
+						},
+						{
+							"key": "token",
+							"value": "CfDJ8ACQSlj7V+BFrNfkWBZAPG3JyolW5OG714irV4mnxwUtI2Lad/+7v5EBNh+KZXlwUDjYgJpJrkWd289c9vCxh/rfthy+mFkAORb0c95wrzcEB+Jne1BZ6ZmlsX/PnH1+Sgph6JXnW4FxpbVTyLZvwgJIAhEpHNBw/kK440HLzJktUzE29MlbJ0y//9kqsioByesJiyzepANw+SCw65J33RxtkI3q6mhXNz+t6RaO2cZr"
+						},
+						{
+							"key": "newPassword",
+							"value": "String123!!"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
