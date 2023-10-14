@@ -1,6 +1,8 @@
 using GlobalDomain.Models.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using TaskListWebApplication.Data;
 using TaskListWebApplication.Helpers;
 using TaskListWebApplication.Models.Options;
 
@@ -66,6 +68,10 @@ services.AddScoped<SwaggerUiAuthorizationCorrectorMiddleware>();
 
 //Options
 services.Configure<IdentityServerOptions>(configuration.GetSection(nameof(IdentityServerOptions)));
+
+//Database
+services.AddDbContext<TaskListApplicationDbContext>(optionsBuilder => { optionsBuilder.UseNpgsql(configuration.GetConnectionString("taskListDb")); });
+services.AddDbContext<IdentityReadonlyDbContext>(optionsBuilder => { optionsBuilder.UseNpgsql(configuration.GetConnectionString("identityDb")); });
 
 #endregion
 
