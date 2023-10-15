@@ -1,4 +1,5 @@
 using IdentityServer.Models.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -6,6 +7,7 @@ using Services;
 namespace IdentityServer.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route("[controller]/[action]")]
 public class UserAccountController : Controller
 {

@@ -1,10 +1,10 @@
+using GlobalDomain.Infrastructure.RoleSystem;
+using GlobalDomain.Infrastructure.Swagger;
 using GlobalDomain.Models.Exceptions;
+using GlobalDomain.Models.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using TaskListWebApplication.Data;
-using TaskListWebApplication.Helpers;
-using TaskListWebApplication.Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -21,37 +21,7 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 
 //Swagger
-services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Доска Задач API", Version = "v1" });
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Description = "JWT by Identity Server 4",
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
-            },
-            new List<string>()
-        }
-    });
-});
+services.AddSwaggerGenWithBearerAuth("Доска Задач API");
 
 //Identity
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using static GlobalDomain.Models.Configuration.RoleSystem;
 
-namespace TaskListWebApplication.Helpers;
+namespace GlobalDomain.Infrastructure.RoleSystem;
 
 public static class AuthorizationOptionsExtensions
 {

@@ -1,4 +1,7 @@
-namespace TaskListWebApplication.Helpers;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+namespace GlobalDomain.Infrastructure.Swagger;
 
 public class SwaggerUiAuthorizationCorrectorMiddleware : IMiddleware
 {
@@ -13,5 +16,16 @@ public class SwaggerUiAuthorizationCorrectorMiddleware : IMiddleware
             context.Request.Headers.Authorization = $"Bearer {authorization}";
 
         await next.Invoke(context);
+    }
+}
+
+public static class SwaggerUiAuthorizationCorrectorMiddlewareExtension
+{
+    /// <summary>
+    /// Добавляет приставку "Bearer" к токену в заголовке Authorization
+    /// </summary>
+    public static void UseSwaggerUiAuthorizationCorrector(this IApplicationBuilder applicationBuilder)
+    {
+        applicationBuilder.UseMiddleware<SwaggerUiAuthorizationCorrectorMiddleware>();
     }
 }

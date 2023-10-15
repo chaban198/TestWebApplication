@@ -1,4 +1,4 @@
-namespace TaskListWebApplication.Models.Options;
+namespace GlobalDomain.Models.Options;
 
 public class IdentityServerOptions
 {
