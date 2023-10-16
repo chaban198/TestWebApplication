@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using GlobalDomain.Infrastructure.RoleSystem;
 using GlobalDomain.Infrastructure.Swagger;
 using GlobalDomain.Models.Exceptions;
@@ -19,7 +20,7 @@ var identityConfig = configuration
     .Get<IdentityServerOptions>() ?? throw new ConfigurationException(typeof(IdentityServerOptions));
 
 //Routing
-services.AddControllers();
+services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 services.AddEndpointsApiExplorer();
 
 //Swagger

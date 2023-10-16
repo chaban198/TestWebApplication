@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using IdentityModel;
 
-namespace TaskListWebApplication.Helpers;
+namespace GlobalDomain.Helpers;
 
 public static class ClaimPrincipalExtensions
 {

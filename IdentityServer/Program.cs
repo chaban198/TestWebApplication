@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using GlobalDomain.Infrastructure.RoleSystem;
 using GlobalDomain.Infrastructure.Swagger;
 using GlobalDomain.Models.Exceptions;
@@ -37,7 +38,7 @@ services.AddIdentityServer()
     .AddJwtBearerClientAuthentication()
     .AddDeveloperSigningCredential(); //todo: not something we want to use in a production environment
 
-services.AddControllers();
+services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGenWithBearerAuth("Identity Server API");
 
