@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
@@ -31,7 +32,7 @@ public static class IdentityConfig
 
     public static IEnumerable<ApiScope> ApiScopes => new ApiScope[]
     {
-        new(TaskListApiScope, "Task-List Web API", new[] { RoleClaim })
+        new(TaskListApiScope, "Task-List Web API", new[] { RoleClaim, JwtClaimTypes.Name })
     };
 
     public static IEnumerable<ApiResource> ApiResources => new ApiResource[]

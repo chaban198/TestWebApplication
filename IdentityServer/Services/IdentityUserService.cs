@@ -1,4 +1,5 @@
 using System.Web;
+using IdentityServer.Helpers;
 using Microsoft.AspNetCore.Identity;
 
 namespace Services;
@@ -28,6 +29,9 @@ public class IdentityUserService : IIdentityUserService
             return result; //failed
         }
 
+        //unlock
+        await _userManager.SetLockoutEnabledAsync(user, false);
+
         //set role
         var roleResult = await _userManager.AddToRoleAsync(user, role);
         if (roleResult.Succeeded is false)
@@ -44,10 +48,10 @@ public class IdentityUserService : IIdentityUserService
         var user = await _userManager.FindByNameAsync(userName);
 
         if (user is null)
-            return IdentityResult.Failed(new IdentityError[] { new() { Code = "404", Description = $"Not found user by name {userName}" } });
+            return CustomIdentityErrors.UserNotFound(userName);
 
         if (user.Email is null)
-            return IdentityResult.Failed(new IdentityError[] { new() { Code = "404", Description = "Not found user email" } });
+            return CustomIdentityErrors.UserEmailNotFound;
 
         var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
         var message = $"Use this token to reset password: {HttpUtility.UrlEncode(resetToken)}";
@@ -62,7 +66,7 @@ public class IdentityUserService : IIdentityUserService
         var user = await _userManager.FindByNameAsync(userName);
 
         if (user is null)
-            return IdentityResult.Failed(new IdentityError[] { new() { Code = "404", Description = $"Not found user by name {userName}" } });
+            return CustomIdentityErrors.UserNotFound(userName);
 
         var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
         return result;

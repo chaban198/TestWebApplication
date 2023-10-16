@@ -6,7 +6,7 @@ namespace TaskListWebApplication.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(RoleSystem.Admin)]
+[Authorize(RoleSystem.User)]
 public class IdentityController : ControllerBase
 {
     [HttpGet]

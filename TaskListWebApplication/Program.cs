@@ -5,6 +5,8 @@ using GlobalDomain.Models.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using TaskListWebApplication.Data;
+using TaskListWebApplication.Infrastructure.Middlewares;
+using TaskListWebApplication.Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -35,9 +37,12 @@ services.AddAuthorization(options => { options.AddRoleSystemPolicies(); });
 
 //Middlewares
 services.AddScoped<SwaggerUiAuthorizationCorrectorMiddleware>();
+services.AddScoped<AuthenticationLockoutMiddleware>();
+services.AddScoped<CustomExceptionHandlerMiddleware>();
 
 //Options
 services.Configure<IdentityServerOptions>(configuration.GetSection(nameof(IdentityServerOptions)));
+services.Configure<IdentityLockoutOptions>(configuration.GetSection(nameof(IdentityLockoutOptions)));
 
 //Database
 services.AddDbContext<TaskListApplicationDbContext>(optionsBuilder => { optionsBuilder.UseNpgsql(configuration.GetConnectionString("taskListDb")); });
@@ -48,6 +53,8 @@ services.AddDbContext<IdentityReadonlyDbContext>(optionsBuilder => { optionsBuil
 #region Middlewares
 
 var app = builder.Build();
+
+app.UseCustomExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -60,6 +67,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseAuthenticationLockout();
 app.UseAuthorization();
 
 app.MapControllers();

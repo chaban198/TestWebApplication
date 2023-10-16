@@ -39,6 +39,9 @@
       <Compile Update="Services\EMailService.cs">
         <DependentUpon>IEMailService.cs</DependentUpon>
       </Compile>
+      <Compile Update="Services\AdminService.cs">
+        <DependentUpon>IAdminService.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

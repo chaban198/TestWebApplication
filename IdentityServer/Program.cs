@@ -5,6 +5,7 @@ using GlobalDomain.Models.Options;
 using IdentityServer.Config;
 using IdentityServer.Data;
 using IdentityServer.Models.Options;
+using IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +52,7 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 services.AddAuthorization(options => { options.AddRoleSystemPolicies(); });
 
 //Services
+services.AddScoped<IAdminService, AdminService>();
 services.AddScoped<IIdentityUserService, IdentityUserService>();
 services.AddScoped<IEMailService, EMailService>();
 
