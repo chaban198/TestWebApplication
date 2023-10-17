@@ -25,6 +25,6 @@ public class TaskDb
     [Column("status")]
     public UserTaskStatus Status { get; set; }
 
-    [Column("userId")]
-    public string? UserId { get; set; }
+    [Column("user")]
+    public string? User { get; set; }
 }
