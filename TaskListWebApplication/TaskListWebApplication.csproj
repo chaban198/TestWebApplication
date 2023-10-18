@@ -25,4 +25,16 @@
       <ProjectReference Include="..\GlobalDomain\GlobalDomain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Services\UserTasksService.cs">
+        <DependentUpon>IUserTasksService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\ProjectsService.cs">
+        <DependentUpon>IProjectsService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\SprintsService.cs">
+        <DependentUpon>ISprintsService.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

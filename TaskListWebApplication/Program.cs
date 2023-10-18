@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskListWebApplication.Data;
 using TaskListWebApplication.Infrastructure.Middlewares;
 using TaskListWebApplication.Models.Options;
+using TaskListWebApplication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -48,6 +49,11 @@ services.Configure<IdentityLockoutOptions>(configuration.GetSection(nameof(Ident
 //Database
 services.AddDbContext<TaskListApplicationDbContext>(optionsBuilder => { optionsBuilder.UseNpgsql(configuration.GetConnectionString("taskListDb")); });
 services.AddDbContext<IdentityReadonlyDbContext>(optionsBuilder => { optionsBuilder.UseNpgsql(configuration.GetConnectionString("identityDb")); });
+
+//Business
+services.AddScoped<IProjectsService, ProjectsService>();
+services.AddScoped<ISprintsService, SprintsService>();
+services.AddScoped<IUserTasksService, UserTasksService>();
 
 #endregion
 

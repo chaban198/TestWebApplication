@@ -10,8 +10,5 @@ namespace TaskListWebApplication.Controllers;
 public class IdentityController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get()
-    {
-        return new JsonResult(from c in User.Claims select new { c.Type, c.Value });
-    }
+    public IActionResult GetUserInfo() => new JsonResult(from c in User.Claims select new { c.Type, c.Value });
 }
