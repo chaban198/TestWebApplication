@@ -11,5 +11,5 @@ public interface ISprintsService
 
     Task UpdateSprintAsync(UpdateSprintRequest request, CancellationToken cancellationToken);
 
-    Task DeleteSprintAsync(string id, CancellationToken cancellationToken);
+    Task DeleteSprintAsync(Guid id, CancellationToken cancellationToken);
 }

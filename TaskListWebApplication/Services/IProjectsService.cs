@@ -11,5 +11,5 @@ public interface IProjectsService
 
     Task UpdateProjectAsync(UpdateProjectRequest request, CancellationToken cancellationToken);
 
-    Task DeleteProjectAsync(string id, CancellationToken cancellationToken);
+    Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken);
 }
