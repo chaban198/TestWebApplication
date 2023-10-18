@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GlobalDomain.Models.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskListWebApplication.Models.Api;
 using TaskListWebApplication.Models.Dto;
 using TaskListWebApplication.Services;
 
 namespace TaskListWebApplication.Controllers;
 
-[Route("[controller]/[action]")]
 [ApiController]
+[Route("[controller]/[action]")]
+[Authorize(RoleSystem.Manager)]
 public class ProjectsController : ControllerBase
 {
     private readonly IProjectsService _projectsService;
