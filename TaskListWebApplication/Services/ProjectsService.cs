@@ -13,11 +13,13 @@ public class ProjectsService : IProjectsService
         _dbContext = dbContext;
     }
 
-    public Task<ProjectDto?> GetProjectAsync(Guid id, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task<Guid[]> GetProjectIdsAsync(string? userLimitation, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-    public Task<Guid> CreateProjectAsync(CreateProjectRequest request, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task<ProjectDto?> GetProjectAsync(Guid id, string? userLimitation, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-    public Task UpdateProjectAsync(UpdateProjectRequest request, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task<Guid> CreateProjectAsync(CreateProjectRequest request, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-    public Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task UpdateProjectAsync(UpdateProjectRequest request, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+    public Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 }

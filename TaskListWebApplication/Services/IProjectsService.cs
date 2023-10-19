@@ -5,11 +5,13 @@ namespace TaskListWebApplication.Services;
 
 public interface IProjectsService
 {
-    Task<ProjectDto?> GetProjectAsync(Guid id, CancellationToken cancellationToken);
+    Task<Guid[]> GetProjectIdsAsync(string? userLimitation, CancellationToken cancellationToken = default);
 
-    Task<Guid> CreateProjectAsync(CreateProjectRequest request, CancellationToken cancellationToken);
+    Task<ProjectDto?> GetProjectAsync(Guid id, string? userLimitation, CancellationToken cancellationToken = default);
 
-    Task UpdateProjectAsync(UpdateProjectRequest request, CancellationToken cancellationToken);
+    Task<Guid> CreateProjectAsync(CreateProjectRequest request, CancellationToken cancellationToken = default);
 
-    Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken);
+    Task UpdateProjectAsync(UpdateProjectRequest request, CancellationToken cancellationToken = default);
+
+    Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken = default);
 }

@@ -13,9 +13,11 @@ public class SprintsService : ISprintsService
         _dbContext = dbContext;
     }
 
-    public Task<SprintDto?> GetSprintAsync(Guid id, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task<SprintDto?> GetSprintAsync(Guid id, string? userLimitation, CancellationToken cancellationToken) => throw new NotImplementedException();
 
-    public Task<Guid> CreateSprintAsync(CreateSprintRequest request, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    public Task<SprintDto[]> GetSprintsByProjectIdAsync(Guid projectId, string? userLimitation, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+    public Task<Guid> CreateSprintAsync(CreateSprintRequest request, CancellationToken cancellationToken) => throw new NotImplementedException();
 
     public Task UpdateSprintAsync(UpdateSprintRequest request, CancellationToken cancellationToken) => throw new NotImplementedException();
 

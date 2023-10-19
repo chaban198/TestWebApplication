@@ -1,4 +1,5 @@
-﻿using GlobalDomain.Models.Configuration;
+﻿using GlobalDomain.Helpers;
+using GlobalDomain.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskListWebApplication.Models.Api;
@@ -13,22 +14,40 @@ namespace TaskListWebApplication.Controllers;
 public class SprintsController : ControllerBase
 {
     private readonly ISprintsService _sprintsService;
-    private readonly IUrlHelper _urlHelper;
 
-    public SprintsController(ISprintsService sprintsService, IUrlHelper urlHelper)
+    public SprintsController(ISprintsService sprintsService)
     {
         _sprintsService = sprintsService;
-        _urlHelper = urlHelper;
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(RoleSystem.User)]
     public async Task<ActionResult<SprintDto>> GetSprint(Guid id, CancellationToken cancellationToken)
     {
-        var sprint = await _sprintsService.GetSprintAsync(id, cancellationToken);
+        var userLimitation = User.GetRole() is not RoleSystem.Admin and not RoleSystem.Manager
+            ? User.GetUsername()
+            : null;
+
+        var sprint = await _sprintsService.GetSprintAsync(id, userLimitation, cancellationToken);
 
         return sprint is not null
             ? Ok(sprint)
             : NotFound();
+    }
+
+    [HttpGet("{projectId:guid}")]
+    [Authorize(RoleSystem.User)]
+    public async Task<ActionResult<SprintDto[]>> GetProjectSprints(Guid projectId, CancellationToken cancellationToken)
+    {
+        var userLimitation = User.GetRole() is not RoleSystem.Admin and not RoleSystem.Manager
+            ? User.GetUsername()
+            : null;
+
+        var sprints = await _sprintsService.GetSprintsByProjectIdAsync(projectId, userLimitation, cancellationToken);
+
+        return sprints.Any()
+            ? Ok(sprints)
+            : NoContent();
     }
 
     [HttpPost]
@@ -36,11 +55,7 @@ public class SprintsController : ControllerBase
     {
         var sprintId = await _sprintsService.CreateSprintAsync(request, cancellationToken);
 
-        var url = _urlHelper.ActionLink(nameof(GetSprint), nameof(SprintsController), sprintId);
-
-        return url is not null
-            ? Accepted(new Uri(url))
-            : Accepted();
+        return Accepted(sprintId);
     }
 
     [HttpPut]

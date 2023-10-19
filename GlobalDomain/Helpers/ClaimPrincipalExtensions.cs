@@ -11,4 +11,11 @@ public static class ClaimPrincipalExtensions
 
         return username?.Value;
     }
+
+    public static string? GetRole(this ClaimsPrincipal user)
+    {
+        var role = user.Claims.FirstOrDefault(x => x.Type is ClaimTypes.Role);
+
+        return role?.Value;
+    }
 }

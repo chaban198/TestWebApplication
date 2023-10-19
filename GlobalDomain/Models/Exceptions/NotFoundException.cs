@@ -8,6 +8,10 @@ public class NotFoundException : Exception
     {
     }
 
+    public NotFoundException(string modelName, Guid key) : base($"Не найден объект {modelName} по ключу {key}")
+    {
+    }
+
     public NotFoundException(string? message) : base(message)
     {
     }

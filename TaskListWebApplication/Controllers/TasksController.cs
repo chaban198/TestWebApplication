@@ -1,4 +1,5 @@
-﻿using GlobalDomain.Models.Configuration;
+﻿using GlobalDomain.Helpers;
+using GlobalDomain.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskListWebApplication.Models.Api;
@@ -13,18 +14,34 @@ namespace TaskListWebApplication.Controllers;
 public class TasksController : ControllerBase
 {
     private readonly IUserTasksService _userTasksService;
-    private readonly IUrlHelper _urlHelper;
 
-    public TasksController(IUserTasksService userTasksService, IUrlHelper urlHelper)
+    public TasksController(IUserTasksService userTasksService)
     {
         _userTasksService = userTasksService;
-        _urlHelper = urlHelper;
+    }
+
+    [HttpGet]
+    [Authorize(RoleSystem.User)]
+    public async Task<ActionResult<Guid[]>> GetAllMyTaskIds(CancellationToken cancellationToken)
+    {
+        var username = User.GetUsername();
+
+        var userTask = await _userTasksService.GetAllUserTaskIdsAsync(username, cancellationToken);
+
+        return userTask.Any()
+            ? Ok(userTask)
+            : NoContent();
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<UserTaskDto>> GetUserTask(Guid id, CancellationToken cancellationToken)
+    [Authorize(RoleSystem.User)]
+    public async Task<ActionResult<UserTaskDto>> GetTask(Guid id, CancellationToken cancellationToken)
     {
-        var userTask = await _userTasksService.GetUserTaskAsync(id, cancellationToken);
+        var userLimitation = User.GetRole() is not RoleSystem.Admin and not RoleSystem.Manager
+            ? User.GetUsername()
+            : null;
+
+        var userTask = await _userTasksService.GetUserTaskAsync(id, userLimitation, cancellationToken);
 
         return userTask is not null
             ? Ok(userTask)
@@ -32,19 +49,15 @@ public class TasksController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUserTask(CreateUserTaskRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateTask(CreateUserTaskRequest request, CancellationToken cancellationToken)
     {
         var userTaskId = await _userTasksService.CreateUserTaskAsync(request, cancellationToken);
 
-        var url = _urlHelper.ActionLink(nameof(GetUserTask), nameof(TasksController), userTaskId);
-
-        return url is not null
-            ? Accepted(new Uri(url))
-            : Accepted();
+        return Accepted(userTaskId);
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateUserTask(UpdateUserTaskRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateTask(UpdateUserTaskRequest request, CancellationToken cancellationToken)
     {
         await _userTasksService.UpdateUserTaskAsync(request, cancellationToken);
 
@@ -52,7 +65,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteUserTask(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteTask(Guid id, CancellationToken cancellationToken)
     {
         await _userTasksService.DeleteUserTask(id, cancellationToken);
 

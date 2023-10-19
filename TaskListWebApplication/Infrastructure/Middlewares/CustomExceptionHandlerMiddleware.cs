@@ -18,6 +18,7 @@ public class CustomExceptionHandlerMiddleware : IMiddleware
         {
             var exceptionMappingData = exception switch
             {
+                NotFoundException => new ExceptionMappingData { Code = (int)HttpStatusCode.NotFound, Message = "Данные не найдены" },
                 AuthenticationException => new ExceptionMappingData { Code = (int)HttpStatusCode.Unauthorized, Message = "Ошибка аутентификации" },
                 AuthenticationLockoutException => new ExceptionMappingData { Code = (int)HttpStatusCode.Forbidden, Message = "Пользователь заблокирован" },
                 _ => ExceptionMappingData.InternalError

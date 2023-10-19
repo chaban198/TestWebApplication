@@ -1,4 +1,5 @@
-﻿using GlobalDomain.Models.Configuration;
+﻿using GlobalDomain.Helpers;
+using GlobalDomain.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskListWebApplication.Models.Api;
@@ -13,18 +14,44 @@ namespace TaskListWebApplication.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly IProjectsService _projectsService;
-    private readonly IUrlHelper _urlHelper;
 
-    public ProjectsController(IProjectsService projectsService, IUrlHelper urlHelper)
+    public ProjectsController(IProjectsService projectsService)
     {
         _projectsService = projectsService;
-        _urlHelper = urlHelper;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<Guid[]>> GetAllProjectIds(CancellationToken cancellationToken)
+    {
+        var projectIds = await _projectsService.GetProjectIdsAsync(userLimitation: null, cancellationToken);
+
+        return projectIds.Any()
+            ? Ok(projectIds)
+            : NoContent();
+    }
+
+    [HttpGet]
+    [Authorize(RoleSystem.User)]
+    public async Task<ActionResult<Guid[]>> GetMyProjectIds(CancellationToken cancellationToken)
+    {
+        var userLimitation = User.GetUsername();
+
+        var projectIds = await _projectsService.GetProjectIdsAsync(userLimitation, cancellationToken);
+
+        return projectIds.Any()
+            ? Ok(projectIds)
+            : NoContent();
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(RoleSystem.User)]
     public async Task<ActionResult<ProjectDto>> GetProject(Guid id, CancellationToken cancellationToken)
     {
-        var project = await _projectsService.GetProjectAsync(id, cancellationToken);
+        var userLimitation = User.GetRole() is not RoleSystem.Admin and not RoleSystem.Manager
+            ? User.GetUsername()
+            : null;
+
+        var project = await _projectsService.GetProjectAsync(id, userLimitation, cancellationToken);
 
         return project is not null
             ? Ok(project)
@@ -36,11 +63,7 @@ public class ProjectsController : ControllerBase
     {
         var projectId = await _projectsService.CreateProjectAsync(request, cancellationToken);
 
-        var url = _urlHelper.ActionLink(nameof(GetProject), nameof(ProjectsController), projectId);
-
-        return url is not null
-            ? Accepted(new Uri(url))
-            : Accepted();
+        return Accepted(projectId);
     }
 
     [HttpPut]

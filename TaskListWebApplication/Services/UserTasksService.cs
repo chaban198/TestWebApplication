@@ -13,7 +13,9 @@ public class UserTasksService : IUserTasksService
         _dbContext = dbContext;
     }
 
-    public Task<UserTaskDto?> GetUserTaskAsync(Guid id, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task<Guid[]> GetAllUserTaskIdsAsync(string? username, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+    public Task<UserTaskDto?> GetUserTaskAsync(Guid id, string? userLimitation, CancellationToken cancellationToken) => throw new NotImplementedException();
 
     public Task<Guid> CreateUserTaskAsync(CreateUserTaskRequest request, CancellationToken cancellationToken) => throw new NotImplementedException();
 
