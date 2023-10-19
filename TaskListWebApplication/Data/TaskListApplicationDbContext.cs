@@ -24,11 +24,5 @@ public class TaskListApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresEnum<UserTaskStatus>();
-
-        modelBuilder
-            .Entity<SprintDb>()
-            .HasOne(p => p.Project)
-            .WithMany(t => t.Sprints)
-            .HasForeignKey(p => p.ProjectId);
     }
 }

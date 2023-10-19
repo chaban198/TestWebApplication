@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskListWebApplication.Models.DbModels;
 
-[Table("sprint")]
+[Table("sprints")]
 public class SprintDb
 {
     [Key]
@@ -34,9 +34,9 @@ public class SprintDb
     public string? Comment { get; set; }
 
     [Column("files")]
-    public List<string> Files { get; set; } = null!;
+    public List<string> Files { get; set; } = new();
 
     //nav property
-    [ForeignKey("projectId")]
     public virtual ProjectDb Project { get; set; } = null!;
+    public virtual ICollection<TaskDb> Tasks { get; set; } = null!;
 }

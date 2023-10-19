@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskListWebApplication.Data;
@@ -12,9 +13,11 @@ using TaskListWebApplication.Data;
 namespace TaskListWebApplication.Migrations
 {
     [DbContext(typeof(TaskListApplicationDbContext))]
-    partial class TaskListApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231019192222_usersFixSprintNav")]
+    partial class usersFixSprintNav
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +53,7 @@ namespace TaskListWebApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("projects");
+                    b.ToTable("project");
                 });
 
             modelBuilder.Entity("TaskListWebApplication.Models.DbModels.SprintDb", b =>
@@ -90,11 +93,18 @@ namespace TaskListWebApplication.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("start");
 
+                    b.Property<Guid>("projectId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("sprints");
+                    b.ToTable("sprint", t =>
+                        {
+                            t.Property("projectId")
+                                .HasColumnName("projectId1");
+                        });
                 });
 
             modelBuilder.Entity("TaskListWebApplication.Models.DbModels.TaskDb", b =>
@@ -125,17 +135,24 @@ namespace TaskListWebApplication.Migrations
                         .HasColumnType("text")
                         .HasColumnName("user");
 
+                    b.Property<Guid?>("sprintId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("SprintId");
+                    b.HasIndex("sprintId");
 
-                    b.ToTable("tasks");
+                    b.ToTable("Tasks", t =>
+                        {
+                            t.Property("sprintId")
+                                .HasColumnName("sprintId1");
+                        });
                 });
 
             modelBuilder.Entity("TaskListWebApplication.Models.DbModels.SprintDb", b =>
                 {
                     b.HasOne("TaskListWebApplication.Models.DbModels.ProjectDb", "Project")
-                        .WithMany("Posts")
+                        .WithMany("Sprints")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -146,22 +163,15 @@ namespace TaskListWebApplication.Migrations
             modelBuilder.Entity("TaskListWebApplication.Models.DbModels.TaskDb", b =>
                 {
                     b.HasOne("TaskListWebApplication.Models.DbModels.SprintDb", "Sprint")
-                        .WithMany("Tasks")
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("sprintId");
 
                     b.Navigation("Sprint");
                 });
 
             modelBuilder.Entity("TaskListWebApplication.Models.DbModels.ProjectDb", b =>
                 {
-                    b.Navigation("Posts");
-                });
-
-            modelBuilder.Entity("TaskListWebApplication.Models.DbModels.SprintDb", b =>
-                {
-                    b.Navigation("Tasks");
+                    b.Navigation("Sprints");
                 });
 #pragma warning restore 612, 618
         }

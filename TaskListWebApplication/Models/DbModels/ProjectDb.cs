@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskListWebApplication.Models.DbModels;
 
-[Table("project")]
+[Table("projects")]
 public class ProjectDb
 {
     [Key]
@@ -23,5 +23,5 @@ public class ProjectDb
     public List<string> Users { get; set; } = null!;
 
     //nav property
-    public virtual List<SprintDb>? Sprints { get; set; }
+    public virtual ICollection<SprintDb> Posts { get; set; } = null!;
 }

@@ -4,6 +4,7 @@ using TaskListWebApplication.Models.Enums;
 
 namespace TaskListWebApplication.Models.DbModels;
 
+[Table("tasks")]
 public class TaskDb
 {
     [Key]
@@ -11,7 +12,7 @@ public class TaskDb
     public Guid Id { get; set; }
 
     [Required]
-    [Column("projectId")]
+    [Column("sprintId")]
     public Guid SprintId { get; set; }
 
     [Required]
@@ -27,4 +28,7 @@ public class TaskDb
 
     [Column("user")]
     public string? User { get; set; }
+
+    //nav property
+    public virtual SprintDb Sprint { get; set; } = null!;
 }
