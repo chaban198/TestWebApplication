@@ -38,5 +38,5 @@ public class SprintDb
 
     //nav property
     [ForeignKey("projectId")]
-    public required virtual ProjectDb Project { get; set; }
+    public virtual ProjectDb? Project { get; set; }
 }

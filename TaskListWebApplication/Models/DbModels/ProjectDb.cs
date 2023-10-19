@@ -23,5 +23,5 @@ public class ProjectDb
     public List<string> Users { get; set; } = null!;
 
     //nav property
-    public required virtual List<SprintDb> Sprints { get; set; }
+    public virtual List<SprintDb>? Sprints { get; set; }
 }

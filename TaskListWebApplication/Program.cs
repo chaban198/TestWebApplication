@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using TaskListWebApplication.Data;
 using TaskListWebApplication.Infrastructure.Middlewares;
+using TaskListWebApplication.Mapping;
 using TaskListWebApplication.Models.Options;
 using TaskListWebApplication.Services;
 
@@ -42,6 +43,9 @@ services.AddScoped<SwaggerUiAuthorizationCorrectorMiddleware>();
 services.AddScoped<AuthenticationLockoutMiddleware>();
 services.AddScoped<CustomExceptionHandlerMiddleware>();
 
+//Mapping
+services.AddAutoMapper(typeof(MainMappingProfile));
+
 //Options
 services.Configure<IdentityServerOptions>(configuration.GetSection(nameof(IdentityServerOptions)));
 services.Configure<IdentityLockoutOptions>(configuration.GetSection(nameof(IdentityLockoutOptions)));
@@ -54,6 +58,7 @@ services.AddDbContext<IdentityReadonlyDbContext>(optionsBuilder => { optionsBuil
 services.AddScoped<IProjectsService, ProjectsService>();
 services.AddScoped<ISprintsService, SprintsService>();
 services.AddScoped<IUserTasksService, UserTasksService>();
+services.AddScoped<IUsersService, UsersService>();
 
 #endregion
 

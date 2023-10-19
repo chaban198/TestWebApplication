@@ -1,5 +1,10 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using GlobalDomain.Models.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using TaskListWebApplication.Data;
 using TaskListWebApplication.Models.Api;
+using TaskListWebApplication.Models.DbModels;
 using TaskListWebApplication.Models.Dto;
 
 namespace TaskListWebApplication.Services;
@@ -7,19 +12,91 @@ namespace TaskListWebApplication.Services;
 public class ProjectsService : IProjectsService
 {
     private readonly TaskListApplicationDbContext _dbContext;
+    private readonly IMapper _mapper;
+    private readonly IUsersService _usersService;
 
-    public ProjectsService(TaskListApplicationDbContext dbContext)
+    public ProjectsService(TaskListApplicationDbContext dbContext, IMapper mapper, IUsersService usersService)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
+        _usersService = usersService;
     }
 
-    public Task<Guid[]> GetProjectIdsAsync(string? userLimitation, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    public async Task<Guid[]> GetProjectIdsAsync(string? username, CancellationToken cancellationToken = default)
+    {
+        var ignoreUserLimitation = username is null;
+        username ??= string.Empty;
 
-    public Task<ProjectDto?> GetProjectAsync(Guid id, string? userLimitation, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        return await _dbContext.Projects
+            .Where(x => ignoreUserLimitation || x.Users.Contains(username))
+            .Select(x => x.Id)
+            .ToArrayAsync(cancellationToken);
+    }
 
-    public Task<Guid> CreateProjectAsync(CreateProjectRequest request, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    public async Task<ProjectDto?> GetProjectAsync(Guid id, string? userLimitation, CancellationToken cancellationToken = default)
+    {
+        var ignoreUserLimitation = userLimitation is null;
+        userLimitation ??= string.Empty;
 
-    public Task UpdateProjectAsync(UpdateProjectRequest request, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        return await _dbContext.Projects
+            .Where(x => ignoreUserLimitation || x.Users.Contains(userLimitation))
+            .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 
-    public Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    public async Task<Guid> CreateProjectAsync(CreateProjectRequest request, CancellationToken cancellationToken = default)
+    {
+        var guid = Guid.NewGuid();
+
+        _dbContext.Projects.Add(new ProjectDb
+        {
+            Id = guid,
+            Name = request.ProjectName,
+            Description = request.ProjectDescription,
+            Users = request.IncludeUsers.Distinct().ToList(),
+        });
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return guid;
+    }
+
+    public async Task UpdateProjectAsync(UpdateProjectRequest request, CancellationToken cancellationToken = default)
+    {
+        var project = await _dbContext.Projects.FirstOrDefaultAsync(x => x.Id == request.ProjectId, cancellationToken);
+
+        if (project is null)
+            throw new NotFoundException(nameof(ProjectDb), request.ProjectId);
+
+        if (request.NewName is not null and not /*empty*/ "")
+            project.Name = request.NewName;
+
+        if (request.NewDescription is not null and not /*empty*/ "")
+            project.Description = request.NewDescription;
+
+        if (request.IncludeUsers.Any())
+        {
+            var userValidation = await _usersService.CheckUsers(request.IncludeUsers);
+            if (userValidation.IsValid is false)
+                throw new NotFoundException(userValidation.ToString());
+
+            project.Users.AddRange(request.IncludeUsers.Distinct());
+        }
+
+        foreach (var exUser in request.ExcludeUsers.Distinct())
+            if (project.Users.Contains(exUser))
+                project.Users.Remove(exUser);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var project = await _dbContext.Projects.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (project is null)
+            throw new NotFoundException(nameof(ProjectDb), id);
+
+        _dbContext.Remove(project);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }
