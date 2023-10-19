@@ -10,7 +10,6 @@ namespace TaskListWebApplication.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-[Authorize(RoleSystem.Manager)]
 public class ProjectsController : ControllerBase
 {
     private readonly IProjectsService _projectsService;
@@ -21,6 +20,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(RoleSystem.Manager)]
     public async Task<ActionResult<Guid[]>> GetAllProjectIds(CancellationToken cancellationToken)
     {
         var projectIds = await _projectsService.GetProjectIdsAsync(userLimitation: null, cancellationToken);
@@ -59,6 +59,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> CreateProject(CreateProjectRequest request, CancellationToken cancellationToken)
     {
         var projectId = await _projectsService.CreateProjectAsync(request, cancellationToken);
@@ -67,6 +68,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> UpdateProject(UpdateProjectRequest request, CancellationToken cancellationToken)
     {
         await _projectsService.UpdateProjectAsync(request, cancellationToken);
@@ -75,6 +77,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> DeleteProject(Guid id, CancellationToken cancellationToken)
     {
         await _projectsService.DeleteProjectAsync(id, cancellationToken);

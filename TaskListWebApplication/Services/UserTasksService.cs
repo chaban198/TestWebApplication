@@ -14,11 +14,13 @@ public class UserTasksService : IUserTasksService
 {
     private readonly TaskListApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly IUsersService _usersService;
 
-    public UserTasksService(TaskListApplicationDbContext dbContext, IMapper mapper)
+    public UserTasksService(TaskListApplicationDbContext dbContext, IMapper mapper, IUsersService usersService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _usersService = usersService;
     }
 
     public async Task<Guid[]> GetAllUserTaskIdsAsync(string? username, CancellationToken cancellationToken)
@@ -27,7 +29,7 @@ public class UserTasksService : IUserTasksService
         username ??= string.Empty;
 
         return await _dbContext.Tasks
-            .Where(x => ignoreUserLimitation || x.Sprint.Project.Users.Contains(username))
+            .Where(x => ignoreUserLimitation || x.User == username)
             .Select(x => x.Id)
             .ToArrayAsync(cancellationToken);
     }
@@ -46,7 +48,7 @@ public class UserTasksService : IUserTasksService
     public async Task<Guid> CreateUserTaskAsync(CreateUserTaskRequest request, CancellationToken cancellationToken)
     {
         var guid = Guid.NewGuid();
-        var sprintExist = await _dbContext.Projects.AnyAsync(x => x.Id == request.SprintId, cancellationToken);
+        var sprintExist = await _dbContext.Sprints.AnyAsync(x => x.Id == request.SprintId, cancellationToken);
 
         if (sprintExist is false)
             throw new NotFoundException(nameof(SprintDb), request.SprintId);
@@ -67,7 +69,10 @@ public class UserTasksService : IUserTasksService
 
     public async Task UpdateUserTaskAsync(UpdateUserTaskRequest request, CancellationToken cancellationToken)
     {
-        var task = await _dbContext.Tasks.FirstOrDefaultAsync(x => x.Id == request.TaskId, cancellationToken);
+        var task = await _dbContext.Tasks
+            .Include(taskDb => taskDb.Sprint)
+            .ThenInclude(sprintDb => sprintDb.Project)
+            .FirstOrDefaultAsync(x => x.Id == request.TaskId, cancellationToken);
 
         if (task is null)
             throw new NotFoundException(nameof(TaskDb), request.TaskId);
@@ -79,7 +84,20 @@ public class UserTasksService : IUserTasksService
             task.Description = request.NewDescription;
 
         if (request.SetUser is not null)
+        {
+            var userValidate = await _usersService.CheckUser(request.SetUser);
+            if (userValidate.IsValid is false)
+                throw new NotFoundException(userValidate.ToString());
+
+            if (task.Sprint.Project.Users.Contains(request.SetUser) is false)
+            {
+                var projectName = task.Sprint.Project.Name;
+                var projectId = task.Sprint.Project.Id;
+                throw new DataConflictException($"Пользователь {request.SetUser} не является участником проекта {projectName}({projectId})");
+            }
+
             task.User = request.SetUser;
+        }
 
         if (request.SetStatus.HasValue)
             task.Status = request.SetStatus.Value;

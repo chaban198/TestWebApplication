@@ -36,6 +36,11 @@ public class SprintsService : ISprintsService
     {
         var ignoreUserLimitation = userLimitation is null;
         userLimitation ??= string.Empty;
+        
+        var projectExist = await _dbContext.Projects.AnyAsync(x => x.Id == projectId, cancellationToken);
+
+        if (projectExist is false)
+            throw new NotFoundException(nameof(ProjectDb), projectId);
 
         return await _dbContext.Sprints
             .Where(x => ignoreUserLimitation || x.Project.Users.Contains(userLimitation))
@@ -60,7 +65,7 @@ public class SprintsService : ISprintsService
             Name = request.SprintName,
             Description = request.SprintDescription,
             Comment = request.SprintComment,
-            Start = DateTime.Now
+            Start = DateTime.UtcNow
         });
 
         await _dbContext.SaveChangesAsync(cancellationToken);

@@ -20,7 +20,7 @@ public class ProjectDb
     public string? Description { get; set; }
 
     [Column("users")]
-    public List<string> Users { get; set; } = null!;
+    public List<string> Users { get; set; } = new();
 
     //nav property
     public virtual ICollection<SprintDb> Posts { get; set; } = null!;

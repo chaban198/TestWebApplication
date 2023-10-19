@@ -10,7 +10,6 @@ namespace TaskListWebApplication.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-[Authorize(RoleSystem.Manager)]
 public class TasksController : ControllerBase
 {
     private readonly IUserTasksService _userTasksService;
@@ -49,6 +48,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> CreateTask(CreateUserTaskRequest request, CancellationToken cancellationToken)
     {
         var userTaskId = await _userTasksService.CreateUserTaskAsync(request, cancellationToken);
@@ -57,6 +57,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> UpdateTask(UpdateUserTaskRequest request, CancellationToken cancellationToken)
     {
         await _userTasksService.UpdateUserTaskAsync(request, cancellationToken);
@@ -65,6 +66,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> DeleteTask(Guid id, CancellationToken cancellationToken)
     {
         await _userTasksService.DeleteUserTask(id, cancellationToken);

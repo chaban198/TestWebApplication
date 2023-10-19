@@ -10,7 +10,6 @@ namespace TaskListWebApplication.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-[Authorize(RoleSystem.Manager)]
 public class SprintsController : ControllerBase
 {
     private readonly ISprintsService _sprintsService;
@@ -51,6 +50,7 @@ public class SprintsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> CreateSprint(CreateSprintRequest request, CancellationToken cancellationToken)
     {
         var sprintId = await _sprintsService.CreateSprintAsync(request, cancellationToken);
@@ -59,6 +59,7 @@ public class SprintsController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> UpdateSprint(UpdateSprintRequest request, CancellationToken cancellationToken)
     {
         await _sprintsService.UpdateSprintAsync(request, cancellationToken);
@@ -67,6 +68,7 @@ public class SprintsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> DeleteSprint(Guid id, CancellationToken cancellationToken)
     {
         await _sprintsService.DeleteSprintAsync(id, cancellationToken);

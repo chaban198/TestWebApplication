@@ -7,5 +7,5 @@ public readonly struct UsersCheckResult
 
     public override string ToString() => IsValid
         ? "Пользователи прошли проверку"
-        : $"Пользователи {string.Join(", ", NotExistedUsers)} не найдены";
+        : $"Следующие пользователи не найдены: {string.Join(", ", NotExistedUsers)} ";
 }
