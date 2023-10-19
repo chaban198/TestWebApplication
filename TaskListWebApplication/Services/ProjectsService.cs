@@ -70,7 +70,7 @@ public class ProjectsService : IProjectsService
         if (request.NewName is not null and not /*empty*/ "")
             project.Name = request.NewName;
 
-        if (request.NewDescription is not null and not /*empty*/ "")
+        if (request.NewDescription is not null)
             project.Description = request.NewDescription;
 
         if (request.IncludeUsers.Any())
