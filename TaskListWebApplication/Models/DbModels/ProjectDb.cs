@@ -19,6 +19,9 @@ public class ProjectDb
     [Column("description")]
     public string? Description { get; set; }
 
+    [Column("users")]
+    public List<string> Users { get; set; } = null!;
+
     //nav property
     public required virtual List<SprintDb> Sprints { get; set; }
 }

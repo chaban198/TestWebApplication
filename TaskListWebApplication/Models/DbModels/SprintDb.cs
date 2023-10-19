@@ -36,9 +36,6 @@ public class SprintDb
     [Column("files")]
     public List<string> Files { get; set; } = null!;
 
-    [Column("users")]
-    public List<string> Users { get; set; } = null!;
-
     //nav property
     [ForeignKey("projectId")]
     public required virtual ProjectDb Project { get; set; }
