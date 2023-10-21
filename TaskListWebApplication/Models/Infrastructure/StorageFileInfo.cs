@@ -1,6 +1,6 @@
 namespace TaskListWebApplication.Models.Infrastructure;
 
-public readonly struct StaticFileInfo
+public readonly struct StorageFileInfo
 {
     public string FileName { get; init; }
     public string? FileScope { get; init; }

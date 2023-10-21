@@ -13,7 +13,7 @@ public class FilesStorage : IFilesStorage
         _hostingEnvironment = hostingEnvironment;
     }
 
-    public async Task<string> UploadFileAsync(StaticFileInfo fileInfo, IFormFile file, CancellationToken cancellationToken)
+    public async Task<string> UploadFileAsync(StorageFileInfo fileInfo, IFormFile file, CancellationToken cancellationToken)
     {
         if (file is null) throw new ArgumentNullException(nameof(file));
 
@@ -29,14 +29,14 @@ public class FilesStorage : IFilesStorage
         return fileName;
     }
 
-    public async Task<byte[]> GetFileAsync(StaticFileInfo fileInfo, CancellationToken cancellationToken)
+    public async Task<byte[]> GetFileAsync(StorageFileInfo fileInfo, CancellationToken cancellationToken)
     {
         var fullPath = Path.Combine(FileStorageRoot, fileInfo.FilePath);
 
         return await File.ReadAllBytesAsync(fullPath, cancellationToken);
     }
 
-    public Task RemoveFileAsync(StaticFileInfo fileInfo, CancellationToken cancellationToken)
+    public Task RemoveFileAsync(StorageFileInfo fileInfo, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

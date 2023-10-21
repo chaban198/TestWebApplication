@@ -111,7 +111,7 @@ public class SprintsService : ISprintsService
 
     public async Task UploadFileToSprintAsync(Guid sprintId, IFormFile file, CancellationToken cancellationToken)
     {
-        var fileInfo = new StaticFileInfo
+        var fileInfo = new StorageFileInfo
         {
             FileName = file.FileName,
             FileScope = ISprintsService.StaticFilesScope,
@@ -147,7 +147,7 @@ public class SprintsService : ISprintsService
         if (sprint.Files.Contains(fileName) is false)
             throw new NotFoundException($"В спринте {sprint.Name} отсутствует файл с именем {fileName}");
 
-        var fileInfo = new StaticFileInfo
+        var fileInfo = new StorageFileInfo
         {
             FileName = fileName,
             FileScope = ISprintsService.StaticFilesScope,
@@ -162,7 +162,7 @@ public class SprintsService : ISprintsService
 
     public async Task DeleteFileOfSprintAsync(Guid sprintId, string fileName, CancellationToken cancellationToken = default)
     {
-        var fileInfo = new StaticFileInfo
+        var fileInfo = new StorageFileInfo
         {
             FileName = fileName,
             FileScope = ISprintsService.StaticFilesScope,
