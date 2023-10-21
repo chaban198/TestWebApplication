@@ -13,9 +13,9 @@ public class UsersService : IUsersService
         _dbContext = dbContext;
     }
 
-    public Task<UsersCheckResult> CheckUser(string user) => CheckUsers(new[] { user });
+    public Task<UsersCheckResult> CheckUserAsync(string user) => CheckUsersAsync(new[] { user });
 
-    public async Task<UsersCheckResult> CheckUsers(IEnumerable<string> usersInput)
+    public async Task<UsersCheckResult> CheckUsersAsync(IEnumerable<string> usersInput)
     {
         var users = usersInput.ToArray();
 

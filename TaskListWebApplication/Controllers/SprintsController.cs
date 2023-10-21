@@ -75,4 +75,32 @@ public class SprintsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet]
+    [Authorize(RoleSystem.User)]
+    public async Task<IActionResult> GetSprintFile(Guid sprintId, string fileName, CancellationToken cancellationToken)
+    {
+        var userLimitation = User.GetRole() is not RoleSystem.Admin and not RoleSystem.Manager
+            ? User.GetUsername()
+            : null;
+
+        return await _sprintsService.GetFileOfSprintAsync(sprintId, fileName, userLimitation, cancellationToken);
+    }
+
+    [HttpPost]
+    [Authorize(RoleSystem.Manager)]
+    public async Task<IActionResult> UploadSprintFile(Guid sprintId, IFormFile file, CancellationToken cancellationToken)
+    {
+        await _sprintsService.UploadFileToSprintAsync(sprintId, file, cancellationToken);
+        return Accepted();
+    }
+
+
+    [HttpDelete]
+    [Authorize(RoleSystem.Manager)]
+    public async Task<IActionResult> DeleteSprintFile(Guid sprintId, string fileName, CancellationToken cancellationToken)
+    {
+        await _sprintsService.DeleteFileOfSprintAsync(sprintId, fileName, cancellationToken);
+        return NoContent();
+    }
 }

@@ -23,5 +23,5 @@ public class ProjectDb
     public List<string> Users { get; set; } = new();
 
     //nav property
-    public virtual ICollection<SprintDb> Posts { get; set; } = null!;
+    public virtual ICollection<SprintDb> Sprints { get; set; } = null!;
 }

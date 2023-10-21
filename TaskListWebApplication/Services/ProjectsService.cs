@@ -14,12 +14,14 @@ public class ProjectsService : IProjectsService
     private readonly TaskListApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
     private readonly IUsersService _usersService;
+    private readonly IFilesStorage _filesStorage;
 
-    public ProjectsService(TaskListApplicationDbContext dbContext, IMapper mapper, IUsersService usersService)
+    public ProjectsService(TaskListApplicationDbContext dbContext, IMapper mapper, IUsersService usersService, IFilesStorage filesStorage)
     {
         _dbContext = dbContext;
         _mapper = mapper;
         _usersService = usersService;
+        _filesStorage = filesStorage;
     }
 
     public async Task<Guid[]> GetProjectIdsAsync(string? username, CancellationToken cancellationToken = default)
@@ -75,7 +77,7 @@ public class ProjectsService : IProjectsService
 
         if (request.IncludeUsers.Any())
         {
-            var userValidation = await _usersService.CheckUsers(request.IncludeUsers);
+            var userValidation = await _usersService.CheckUsersAsync(request.IncludeUsers);
             if (userValidation.IsValid is false)
                 throw new NotFoundException(userValidation.ToString());
 
@@ -91,12 +93,23 @@ public class ProjectsService : IProjectsService
 
     public async Task DeleteProjectAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var project = await _dbContext.Projects.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var project = await _dbContext.Projects
+            .Include(projectDb => projectDb.Sprints)
+            .ThenInclude(sprintDb => sprintDb.Tasks)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (project is null)
             throw new NotFoundException(nameof(ProjectDb), id);
 
+        var sprintIds = project.Sprints
+            .Select(x => x.Id)
+            .ToArray();
+
         _dbContext.Remove(project);
+
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        foreach (var sprintId in sprintIds)
+            await _filesStorage.RemoveFilesScopeAsync(ISprintsService.StaticFilesScope, sprintId, cancellationToken);
     }
 }

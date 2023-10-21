@@ -69,7 +69,7 @@ public class TasksController : ControllerBase
     [Authorize(RoleSystem.Manager)]
     public async Task<IActionResult> DeleteTask(Guid id, CancellationToken cancellationToken)
     {
-        await _userTasksService.DeleteUserTask(id, cancellationToken);
+        await _userTasksService.DeleteUserTaskAsync(id, cancellationToken);
 
         return NoContent();
     }

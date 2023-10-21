@@ -13,6 +13,5 @@ public interface IUserTasksService
 
     Task UpdateUserTaskAsync(UpdateUserTaskRequest request, CancellationToken cancellationToken = default);
 
-    Task DeleteUserTask(Guid id, CancellationToken cancellationToken = default);
-
+    Task DeleteUserTaskAsync(Guid id, CancellationToken cancellationToken = default);
 }

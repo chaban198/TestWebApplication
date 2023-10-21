@@ -40,6 +40,9 @@
       <Compile Update="Services\UsersService.cs">
         <DependentUpon>IUsersService.cs</DependentUpon>
       </Compile>
+      <Compile Update="Services\FilesStorage.cs">
+        <DependentUpon>IFilesStorage.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

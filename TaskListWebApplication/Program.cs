@@ -11,7 +11,12 @@ using TaskListWebApplication.Mapping;
 using TaskListWebApplication.Models.Options;
 using TaskListWebApplication.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    WebRootPath = "FileStorage"
+});
+
 var services = builder.Services;
 var configuration = builder.Configuration;
 
@@ -59,6 +64,7 @@ services.AddScoped<IProjectsService, ProjectsService>();
 services.AddScoped<ISprintsService, SprintsService>();
 services.AddScoped<IUserTasksService, UserTasksService>();
 services.AddScoped<IUsersService, UsersService>();
+services.AddScoped<IFilesStorage, FilesStorage>();
 
 #endregion
 

@@ -42,10 +42,11 @@ public class CustomExceptionHandlerMiddleware : IMiddleware
     }
 }
 
+#region ExtensionHelper
+
 public static class ExceptionHandlerMiddlewareExtensions
 {
-    public static void UseCustomExceptionHandler(this IApplicationBuilder builder)
-    {
-        builder.UseMiddleware<CustomExceptionHandlerMiddleware>();
-    }
+    public static void UseCustomExceptionHandler(this IApplicationBuilder app) => app.UseMiddleware<CustomExceptionHandlerMiddleware>();
 }
+
+#endregion

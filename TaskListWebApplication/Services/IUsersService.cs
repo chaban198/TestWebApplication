@@ -4,7 +4,7 @@ namespace TaskListWebApplication.Services;
 
 public interface IUsersService
 {
-    Task<UsersCheckResult> CheckUser(string user);
+    Task<UsersCheckResult> CheckUserAsync(string user);
 
-    Task<UsersCheckResult> CheckUsers(IEnumerable<string> users);
+    Task<UsersCheckResult> CheckUsersAsync(IEnumerable<string> users);
 }

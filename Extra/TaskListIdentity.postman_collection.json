@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ba7e6aa1-395e-4391-bfb1-92d468d3017e",
+		"_postman_id": "95620d76-9dcb-4de0-ac88-74073ef1bb62",
 		"name": "TaskListIdentity",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15525746"
@@ -34,12 +34,12 @@
 						},
 						{
 							"key": "username",
-							"value": "Debug User",
+							"value": "DebugAdmin",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "123456qwerty",
+							"value": "String123!",
 							"type": "text"
 						}
 					]
@@ -89,60 +89,30 @@
 			"response": []
 		},
 		{
-			"name": "ResetPassword",
+			"name": "GetFile",
 			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:44342/UserAccount/ResetPassword?userName=DebugUser229",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "44342",
-					"path": [
-						"UserAccount",
-						"ResetPassword"
-					],
-					"query": [
-						{
-							"key": "userName",
-							"value": "DebugUser229"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ConfirmResetPassword",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:44342/UserAccount/ConfirmResetPassword?userName=DebugUser229&token=CfDJ8ACQSlj7V+BFrNfkWBZAPG3JyolW5OG714irV4mnxwUtI2Lad/+7v5EBNh+KZXlwUDjYgJpJrkWd289c9vCxh/rfthy+mFkAORb0c95wrzcEB+Jne1BZ6ZmlsX/PnH1+Sgph6JXnW4FxpbVTyLZvwgJIAhEpHNBw/kK440HLzJktUzE29MlbJ0y//9kqsioByesJiyzepANw+SCw65J33RxtkI3q6mhXNz+t6RaO2cZr&newPassword=String123!!",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "44342",
-					"path": [
-						"UserAccount",
-						"ConfirmResetPassword"
-					],
-					"query": [
-						{
-							"key": "userName",
-							"value": "DebugUser229"
-						},
+				"auth": {
+					"type": "bearer",
+					"bearer": [
 						{
 							"key": "token",
-							"value": "CfDJ8ACQSlj7V+BFrNfkWBZAPG3JyolW5OG714irV4mnxwUtI2Lad/+7v5EBNh+KZXlwUDjYgJpJrkWd289c9vCxh/rfthy+mFkAORb0c95wrzcEB+Jne1BZ6ZmlsX/PnH1+Sgph6JXnW4FxpbVTyLZvwgJIAhEpHNBw/kK440HLzJktUzE29MlbJ0y//9kqsioByesJiyzepANw+SCw65J33RxtkI3q6mhXNz+t6RaO2cZr"
-						},
-						{
-							"key": "newPassword",
-							"value": "String123!!"
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjNENkNFQUFFOTQ0QkRFRDNGNTlGOUQ1OEVGN0ZDNjExIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE2OTc4NDEyNzEsImV4cCI6MTY5Nzg0NDg3MSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNDIiLCJhdWQiOiJ0YXNrLWxpc3QtYXBpIiwiY2xpZW50X2lkIjoidGFzay1saXN0LXRlc3QtY2xpZW50Iiwic3ViIjoiZTEyNTAyZTAtMGI0Ny00OGU4LWI3YzYtYmYwZjA5Y2MzN2RlIiwiYXV0aF90aW1lIjoxNjk3ODQxMjcxLCJpZHAiOiJsb2NhbCIsInJvbGUiOiJhZG1pbiIsIm5hbWUiOiJEZWJ1Z0FkbWluIiwianRpIjoiODU3OTUyQ0E1MUU1OTkxNzRFMjUwMkM2RkY2MTgxNDMiLCJpYXQiOjE2OTc4NDEyNzEsInNjb3BlIjpbIm9wZW5pZCIsInRhc2stbGlzdC1zY29wZSJdLCJhbXIiOlsicHdkIl19.WcClopWmNiUwn_krjdya41c2tmNrt-SbtjSTwM0UUGOyxpqUjrexKT_IsoDtK_49IBpIWo3bbi9L0uN1Emk1p4qTLWYeZEU5KZ8ZHbQP7TvFXnhSEyS8W37vwEDO6OLsNHV83bBYYSFui-f-XERVI8ZRVFMrnrH3BcRIRgT-ImwHe3fnlzrZsLuQsBY2Fl21_knMtUHWfU3wnY0bK-IwjNUWVNTkyUMRQPvsYqZbnkM5LAfE2Sykin3eU0xElr7My_7hKoCs6V1iobZ0C460lEs7J1T48iWy7Tlo0Tkv72CpTgYynSvCCTGnJPFwHwcTcLrE0-RO79vsA9UTDK1yfA",
+							"type": "string"
 						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44339/file/123",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44339",
+					"path": [
+						"file",
+						"123"
 					]
 				}
 			},

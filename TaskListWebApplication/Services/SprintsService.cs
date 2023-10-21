@@ -1,11 +1,14 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using GlobalDomain.Models.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskListWebApplication.Data;
+using TaskListWebApplication.Helpers;
 using TaskListWebApplication.Models.Api;
 using TaskListWebApplication.Models.DbModels;
 using TaskListWebApplication.Models.Dto;
+using TaskListWebApplication.Models.Infrastructure;
 
 namespace TaskListWebApplication.Services;
 
@@ -13,11 +16,13 @@ public class SprintsService : ISprintsService
 {
     private readonly TaskListApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly IFilesStorage _filesStorage;
 
-    public SprintsService(TaskListApplicationDbContext dbContext, IMapper mapper)
+    public SprintsService(TaskListApplicationDbContext dbContext, IMapper mapper, IFilesStorage filesStorage)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _filesStorage = filesStorage;
     }
 
     public async Task<SprintDto?> GetSprintAsync(Guid id, string? userLimitation, CancellationToken cancellationToken)
@@ -36,7 +41,7 @@ public class SprintsService : ISprintsService
     {
         var ignoreUserLimitation = userLimitation is null;
         userLimitation ??= string.Empty;
-        
+
         var projectExist = await _dbContext.Projects.AnyAsync(x => x.Id == projectId, cancellationToken);
 
         if (projectExist is false)
@@ -99,6 +104,82 @@ public class SprintsService : ISprintsService
             throw new NotFoundException(nameof(SprintDb), id);
 
         _dbContext.Remove(sprint);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await _filesStorage.RemoveFilesScopeAsync(ISprintsService.StaticFilesScope, id, cancellationToken);
+    }
+
+    public async Task UploadFileToSprintAsync(Guid sprintId, IFormFile file, CancellationToken cancellationToken)
+    {
+        var fileInfo = new StaticFileInfo
+        {
+            FileName = file.FileName,
+            FileScope = ISprintsService.StaticFilesScope,
+            ScopeId = sprintId
+        };
+
+        var sprint = await _dbContext.Sprints.FirstOrDefaultAsync(x => x.Id == sprintId, cancellationToken);
+
+        if (sprint is null)
+            throw new NotFoundException(nameof(SprintDb), sprintId);
+
+        if (sprint.Files.Contains(fileInfo.FileName))
+            throw new DataConflictException($"В спринте {sprint.Name} уже содержится файл с именем {fileInfo.FileName}");
+
+        sprint.Files.Add(fileInfo.FileName);
+
+        await _filesStorage.UploadFileAsync(fileInfo, file, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<FileContentResult> GetFileOfSprintAsync(Guid sprintId, string fileName, string? userLimitation, CancellationToken cancellationToken)
+    {
+        var sprint = await _dbContext.Sprints
+            .Include(sprintDb => sprintDb.Project)
+            .FirstOrDefaultAsync(x => x.Id == sprintId, cancellationToken);
+
+        if (sprint is null)
+            throw new NotFoundException(nameof(SprintDb), sprintId);
+
+        if (userLimitation is not null && sprint.Project.Users.Contains(userLimitation) is false)
+            throw new UnauthorizedAccessException($"У пользователя нет доступа к проекту этого спринта. Id проекта: {sprint.ProjectId}");
+
+        if (sprint.Files.Contains(fileName) is false)
+            throw new NotFoundException($"В спринте {sprint.Name} отсутствует файл с именем {fileName}");
+
+        var fileInfo = new StaticFileInfo
+        {
+            FileName = fileName,
+            FileScope = ISprintsService.StaticFilesScope,
+            ScopeId = sprintId
+        };
+
+        var contentType = InputOutputHelper.GetContentType(fileName);
+
+        var file = await _filesStorage.GetFileAsync(fileInfo, cancellationToken);
+        return new FileContentResult(file, contentType);
+    }
+
+    public async Task DeleteFileOfSprintAsync(Guid sprintId, string fileName, CancellationToken cancellationToken = default)
+    {
+        var fileInfo = new StaticFileInfo
+        {
+            FileName = fileName,
+            FileScope = ISprintsService.StaticFilesScope,
+            ScopeId = sprintId
+        };
+
+        var sprint = await _dbContext.Sprints.FirstOrDefaultAsync(x => x.Id == sprintId, cancellationToken);
+
+        if (sprint is null)
+            throw new NotFoundException(nameof(SprintDb), sprintId);
+
+        if (sprint.Files.Contains(fileName) is false)
+            throw new NotFoundException($"В спринте {sprint.Name} отсутствует файл с именем {fileInfo.FileName}");
+
+        sprint.Files.Remove(fileName);
+
+        await _filesStorage.RemoveFileAsync(fileInfo, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -40,6 +40,7 @@ public class UserTasksService : IUserTasksService
         userLimitation ??= string.Empty;
 
         return await _dbContext.Tasks
+            .Where(x => x.Id == id)
             .Where(x => ignoreUserLimitation || x.Sprint.Project.Users.Contains(userLimitation))
             .ProjectTo<UserTaskDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(cancellationToken);
@@ -85,7 +86,7 @@ public class UserTasksService : IUserTasksService
 
         if (request.SetUser is not null)
         {
-            var userValidate = await _usersService.CheckUser(request.SetUser);
+            var userValidate = await _usersService.CheckUserAsync(request.SetUser);
             if (userValidate.IsValid is false)
                 throw new NotFoundException(userValidate.ToString());
 
@@ -105,7 +106,7 @@ public class UserTasksService : IUserTasksService
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteUserTask(Guid id, CancellationToken cancellationToken)
+    public async Task DeleteUserTaskAsync(Guid id, CancellationToken cancellationToken)
     {
         var task = await _dbContext.Tasks.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
