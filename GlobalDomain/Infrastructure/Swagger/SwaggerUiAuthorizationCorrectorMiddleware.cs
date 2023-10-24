@@ -12,7 +12,7 @@ public class SwaggerUiAuthorizationCorrectorMiddleware : IMiddleware
     {
         var authorization = context.Request.Headers.Authorization.FirstOrDefault();
 
-        if (authorization?.Contains("Bearer") is false)
+        if (authorization?.StartsWith("Bearer") is false)
             context.Request.Headers.Authorization = $"Bearer {authorization}";
 
         await next.Invoke(context);
