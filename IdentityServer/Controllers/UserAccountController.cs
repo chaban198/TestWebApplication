@@ -13,9 +13,21 @@ public class UserAccountController : Controller
 {
     private readonly IIdentityUserService _userService;
 
+    private const string TokenConnectUrl = "/connect/token";
+    private const string UrlencodedUrlContentType = "application/x-www-form-urlencoded";
+
     public UserAccountController(IIdentityUserService userService)
     {
         _userService = userService;
+    }
+
+    [HttpPost]
+    [Route(TokenConnectUrl)]
+    [Consumes(UrlencodedUrlContentType)]
+    public IActionResult Login([FromForm] LoginByPasswordRequest request)
+    {
+        //SWAGGER declaration only!
+        throw new NotSupportedException("Запрос не был отправлен в Identity server");
     }
 
     [HttpPost]
