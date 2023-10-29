@@ -27,7 +27,8 @@ public class UserAccountController : Controller
     public IActionResult Login([FromForm] LoginByPasswordRequest request)
     {
         //SWAGGER declaration only!
-        throw new NotSupportedException("Запрос не был отправлен в Identity server");
+        //При правильной настрйоке, запрос должен быть перехвачен логикой Identity Server
+        return Problem("Запрос не был отправлен в Identity server");
     }
 
     [HttpPost]
